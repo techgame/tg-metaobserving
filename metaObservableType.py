@@ -17,10 +17,12 @@
 class TypeObserverClassInit(object):
     def onObservableClassInit(self, pName, obKlass):
         raise NotImplementedError('Subclass Responsibility: %r' % (self,))
+    onObservableClassInit.priority = 0
 
 class TypeObserverInit(object):
     def onObservableInit(self, pName, obInstance):
         raise NotImplementedError('Subclass Responsibility: %r' % (self,))
+    onObservableInit.priority = 0
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -48,11 +50,18 @@ class MetaObservableClassType(type):
             for k, v in vars(base).items():
                 a = getattr(v, attr, missing)
                 if a is not missing:
-                    r[k] = (i, (k, a))
+                    r[k] = ((a, i), (k, a))
                     i += 1
+
         r = r.values()
-        r.sort()
+        r.sort(key=self._listSortByPriority)
         return [e[1] for e in r]
+
+    @staticmethod
+    def _listSortByPriority(entry):
+        a, i = entry[0]
+        aw = getattr(a, 'priority', 0)
+        return (aw, i)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

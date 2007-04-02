@@ -17,6 +17,10 @@ from collections import defaultdict
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class ObserverSet(set):
+    def change(self, bAdd, observer):
+        if bAdd: self.add(observer)
+        else: self.remove(observer)
+
     def call_ak(self, *args, **kw):
         for obs in self.copy():
             obs(*args, **kw)
@@ -54,6 +58,9 @@ class KeyedObserverSet(defaultdict):
         result.update((k, v.copy()) for k,v in self.iteritems())
         return result
 
+    def change(self, bAdd, key, observer):
+        if bAdd: self.add(key, observer)
+        else: self.remove(key, observer)
     def add(self, key, observer):
         obsSet = self[key]
         obsSet.add(observer)

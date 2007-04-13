@@ -11,5 +11,6 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from .metaObservableType import MetaObservableType, MetaObservableClassType, MetaObservalbeObject
-from .typeObservingProperty import OBProperty, obproperty, OBInstProperty, obInstProperty
+from .obProperty import OBProperty, obproperty, OBInstProperty, obInstProperty
+from .obFactoryMap import OBFactoryMap
 

@@ -17,6 +17,9 @@ from collections import defaultdict
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class ObserverSet(set):
+    def __repr__(self):
+        return '{' + ', '.join(sorted([k.__name__ for k in self])) + '}'
+
     def change(self, bAdd, observer):
         if bAdd: self.add(observer)
         else: self.remove(observer)
@@ -53,6 +56,12 @@ class KeyedObserverSet(defaultdict):
     def new(klass):
         return klass()
 
+    def __repr__(self):
+        r = sorted([(k, repr(o)) for k,o in self.items()])
+        if r:
+            r = ('  %s: %s,' % e for e in r)
+            return '{\n' + '\n'.join(r) + '\n}'
+        else: return '{}'
     def copy(self):
         result = self.new()
         result.update((k, v.copy()) for k,v in self.iteritems())

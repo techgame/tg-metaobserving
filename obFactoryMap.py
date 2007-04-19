@@ -17,22 +17,25 @@
 class OBFactoryMap(object):
     def __init__(self, *args, **kw):
         if args or kw:
-            self.update(*args, **kw)
+            self._update_(*args, **kw)
 
     def onObservableClassInit(self, propertyName, obKlass):
-        self = self.copy()
+        self = self._copy_()
         setattr(obKlass, propertyName, self)
     onObservableClassInit.priority = -10
 
     @classmethod
-    def new(klass):
+    def _new_(klass):
         return klass()
+    new = _new_
 
     def copy(self):
-        r = self.new()
-        r.update(self.__dict__)
+        r = self._new_()
+        r._update_(self.__dict__)
         return r
+    copy = _copy_
 
-    def update(self, *args, **kw):
+    def _update_(self, *args, **kw):
         self.__dict__.update(*args, **kw)
+    update = _update_
 

@@ -39,3 +39,17 @@ class OBFactoryMap(object):
         self.__dict__.update(*args, **kw)
     update = _update_
 
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    def _keys_(self):
+        self.__dict__.keys()
+    keys = _keys_
+
+    def _values_(self, *args, **kw):
+        self.__dict__.values(*args, **kw)
+    values = _values_
+
+    def _items_(self, *args, **kw):
+        self.__dict__.items(*args, **kw)
+    items = _items_
+

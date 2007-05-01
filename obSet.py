@@ -17,13 +17,13 @@ from .obProperty import obproperty
 #~ Definitions 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-class ObserverSet(set):
+class OBSet(set):
     def __repr__(self):
         return '{' + ', '.join(sorted([k.__name__ for k in self])) + '}'
 
     def change(self, bAdd, observer):
         if bAdd: self.add(observer)
-        else: self.remove(observer)
+        else: self.discard(observer)
 
     def call_ak(self, *args, **kw):
         for obs in self.copy():
@@ -41,14 +41,13 @@ class ObserverSet(set):
         for obs in self.copy():
             obs(a1, a2, a3)
 
-ObserverSet.property = classmethod(obproperty)
+OBSet.property = classmethod(obproperty)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-class KeyedObserverSet(defaultdict):
-    ObserverSet = ObserverSet
-    def __init__(self):
-        defaultdict.__init__(self, self.ObserverSet)
+class OBKeyedSet(defaultdict):
+    def __init__(self, OBSet=OBSet):
+        defaultdict.__init__(self, OBSet)
 
     def __repr__(self):
         klass = self.__class__
@@ -72,7 +71,7 @@ class KeyedObserverSet(defaultdict):
 
     def change(self, bAdd, key, observer):
         if bAdd: self.add(key, observer)
-        else: self.remove(key, observer)
+        else: self.discard(key, observer)
     def add(self, key, observer):
         obsSet = self[key]
         obsSet.add(observer)
@@ -111,5 +110,5 @@ class KeyedObserverSet(defaultdict):
         obsSet = self[key]
         return obsSet.call_n3(a1, a2, a3)
 
-KeyedObserverSet.property = classmethod(obproperty)
+OBKeyedSet.property = classmethod(obproperty)
 

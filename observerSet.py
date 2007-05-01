@@ -11,6 +11,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from collections import defaultdict
+from .obProperty import obproperty
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~ Definitions 
@@ -39,6 +40,8 @@ class ObserverSet(set):
     def call_n3(self, a1, a2, a3):
         for obs in self.copy():
             obs(a1, a2, a3)
+
+ObserverSet.property = classmethod(obproperty)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -107,4 +110,6 @@ class KeyedObserverSet(defaultdict):
     def call_n3(self, key, a1, a2, a3):
         obsSet = self[key]
         return obsSet.call_n3(a1, a2, a3)
+
+KeyedObserverSet.property = classmethod(obproperty)
 

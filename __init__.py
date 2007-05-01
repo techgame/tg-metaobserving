@@ -14,3 +14,5 @@ from .metaObservableType import MetaObservableType, MetaObservableClassType, Met
 from .obProperty import OBProperty, obproperty, OBInstProperty, obInstProperty
 from .obFactoryMap import OBFactoryMap
 
+from .observerSet import ObserverSet, KeyedObserverSet
+

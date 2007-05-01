@@ -21,10 +21,12 @@ class OBProperty(object):
     Can only be used on a object using MetaObservableType-based metaclass.
     """
     missing = object()
-    private = None
     public = None
+    private = None
+    _private_fmt = '__ob_%s'
 
-    def __init__(self, factory=NotImplemented, isValue=None):
+    def __init__(self, factory=NotImplemented, isValue=None, publish=None):
+        self._setPublishName(publish)
         if isValue is None:
             # autodetect parameter
             if factory is NotImplemented:
@@ -39,12 +41,15 @@ class OBProperty(object):
     def factoryFromValue(self, value):
         return (lambda value=value: value)
 
+    def _setPublishName(self, publish):
+        if publish is None or isinstance(self.public, str):
+            return
+
+        self.public = publish
+        self.private = self._private_fmt % (publish,)
+
     def onObservableClassInit(self, propertyName, obKlass):
-        self.public = propertyName
-        self.private = "__ob_"+propertyName
-    def onObservableInit(self, propertyName, obInst):
-        if self.factory is not None:
-            self.__get__(obInst, obInst.__class__)
+        self._setPublishName(propertyName)
 
     def __get__(self, obInst, obKlass):
         if obInst is None:

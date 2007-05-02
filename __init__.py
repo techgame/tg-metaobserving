@@ -14,5 +14,5 @@ from .metaObservableType import MetaObservableType, MetaObservableClassType, Met
 from .obProperty import OBProperty, obproperty, OBInstProperty, obInstProperty
 from .obFactoryMap import OBFactoryMap
 
-from .obSet import OBSet, OBKeyedSet
+from .obCollections import OBDict, OBSet, OBKeyedSet, OBChannelSet, OBList, OBList, OBKeyedList, OBChannelList 
 

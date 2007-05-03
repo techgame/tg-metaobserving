@@ -21,6 +21,7 @@ class OBCallN(object):
     def call_ak(self, *args, **kw):
         for obs in self.inCallOrder():
             obs(*args, **kw)
+    __call__ = call_ak
 
     def call_n1(self, a1):
         for obs in self.inCallOrder():
@@ -150,7 +151,8 @@ class OBKeyedCollection(defaultdict):
     def call_ak(self, key, *args, **kw):
         obsSet = self.get(key, None)
         if obsSet is not None:
-            return obsSet.call(*args, **kw)
+            return obsSet.call_ak(*args, **kw)
+    __call__ = call_ak
 
     def call_n1(self, key, a1):
         obsSet = self.get(key, None)

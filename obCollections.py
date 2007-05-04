@@ -48,6 +48,10 @@ class OBList(list, OBCallN):
     def inCallOrder(self):
         return list(self)
 
+    def on(self, fn):
+        self.add(fn)
+        return fn
+
     def add(self, observer):
         self.append(observer)
     def discard(self, observer):
@@ -68,6 +72,10 @@ class OBDict(set, OBCallN):
     def __repr__(self):
         return '{' + ', '.join(sorted(['%s: %s' % (n, k.__name__) for n, k in self.items()])) + '}'
 
+    def on(self, fn):
+        self[fn] = fn
+        return fn
+
     def inCallOrder(self):
         return self.values()
 
@@ -81,6 +89,10 @@ class OBSet(set, OBCallN):
 
     def inCallOrder(self):
         return list(self)
+
+    def on(self, fn):
+        self.add(fn)
+        return fn
 
     def change(self, bAdd, observer):
         if bAdd: self.add(observer)

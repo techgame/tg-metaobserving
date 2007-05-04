@@ -21,6 +21,7 @@ class OBCallN(object):
     def call_ak(self, *args, **kw):
         for obs in self.inCallOrder():
             obs(*args, **kw)
+    __call__ = call_ak
 
     def call_n1(self, a1):
         for obs in self.inCallOrder():
@@ -47,6 +48,10 @@ class OBList(list, OBCallN):
     def inCallOrder(self):
         return list(self)
 
+    def on(self, fn):
+        self.add(fn)
+        return fn
+
     def add(self, observer):
         self.append(observer)
     def discard(self, observer):
@@ -67,6 +72,10 @@ class OBDict(set, OBCallN):
     def __repr__(self):
         return '{' + ', '.join(sorted(['%s: %s' % (n, k.__name__) for n, k in self.items()])) + '}'
 
+    def on(self, fn):
+        self[fn] = fn
+        return fn
+
     def inCallOrder(self):
         return self.values()
 
@@ -80,6 +89,10 @@ class OBSet(set, OBCallN):
 
     def inCallOrder(self):
         return list(self)
+
+    def on(self, fn):
+        self.add(fn)
+        return fn
 
     def change(self, bAdd, observer):
         if bAdd: self.add(observer)
@@ -150,7 +163,8 @@ class OBKeyedCollection(defaultdict):
     def call_ak(self, key, *args, **kw):
         obsSet = self.get(key, None)
         if obsSet is not None:
-            return obsSet.call(*args, **kw)
+            return obsSet.call_ak(*args, **kw)
+    __call__ = call_ak
 
     def call_n1(self, key, a1):
         obsSet = self.get(key, None)

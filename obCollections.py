@@ -23,6 +23,10 @@ class OBCallN(object):
             obs(*args, **kw)
     __call__ = call_ak
 
+    def call_a(self, *args):
+        for obs in self.inCallOrder():
+            obs(*args)
+
     def call_n1(self, a1):
         for obs in self.inCallOrder():
             obs(a1)
@@ -160,11 +164,23 @@ class OBKeyedCollection(defaultdict):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    _call_enabled = False
+    def __call__(self, key, *args, **kw):
+        if not self._call_enabled:
+            raise NotImplementedError('%s is not currently callable' % (self.__class__.__name__,))
+        obsSet = self.get(key, None)
+        if obsSet is not None:
+            return obsSet.call_ak(*args, **kw)
+
+    def call_a(self, key, *args):
+        obsSet = self.get(key, None)
+        if obsSet is not None:
+            return obsSet.call_a(*args)
+
     def call_ak(self, key, *args, **kw):
         obsSet = self.get(key, None)
         if obsSet is not None:
             return obsSet.call_ak(*args, **kw)
-    __call__ = call_ak
 
     def call_n1(self, key, a1):
         obsSet = self.get(key, None)

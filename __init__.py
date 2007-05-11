@@ -11,9 +11,27 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from .obUtils import asWeakMethod
-from .metaObservableType import MetaObservableType, MetaObservableClassType, MetaObservalbeObject
-from .obProperty import OBProperty, obproperty, OBInstProperty, obInstProperty
+
+from .metaObservableType import (
+        MetaObservableType,
+        MetaObservableClassType,
+        MetaObservalbeObject, )
+
+from .obProperty import (
+        OBProperty,
+        obproperty,
+        OBInstProperty,
+        obInstProperty, )
+
 from .obFactoryMap import OBFactoryMap
 
-from .obCollections import OBDict, OBSet, OBKeyedSet, OBChannelSet, OBList, OBList, OBKeyedList, OBChannelList 
+from .obCollections import (
+        OBDict,
+        OBSet,
+        OBKeyedSet,
+        OBChannelSet,
+        OBList,
+        OBList,
+        OBKeyedList,
+        OBChannelList,)
 

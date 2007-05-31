@@ -162,6 +162,16 @@ class OBKeyedCollection(defaultdict):
         else:
             self[key].clear()
 
+    def on(self, key, fn=None):
+        if fn is not None:
+            self.add(key, fn)
+            return
+
+        def addKey(fn):
+            self.add(key, fn)
+            return fn
+        return addKey
+
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     _call_enabled = False

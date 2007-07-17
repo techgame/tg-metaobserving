@@ -155,7 +155,7 @@ class OBKeyedCollection(defaultdict):
         if self._purgeEmpty:
             if key is None:
                 defaultdict.clear(self)
-            else: del self[key]
+            else: self.pop(key, None)
         elif key is None:
             for v in self.itervalues():
                 v.clear()

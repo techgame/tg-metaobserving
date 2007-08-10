@@ -35,6 +35,12 @@ class OBFactoryMap(object):
         return r
     copy = _copy_
 
+    def _branch_(self, *args, **kw):
+        self = self.copy()
+        self.update(*args, **kw)
+        return self
+    branch = _branch_
+
     def _update_(self, *args, **kw):
         self.__dict__.update(*args, **kw)
     update = _update_

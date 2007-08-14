@@ -82,9 +82,9 @@ class MetaObservableType(MetaObservableClassType):
     """
     def __init__(self, name, bases, kvars):
         self.observerNotifyClassInit()
-        self.refreshObservables()
+        self._refreshObservables()
 
-    def refreshObservables(self):
+    def _refreshObservables(self):
         self._initObservers = self._getClassVars('onObservableInit')
 
     def __call__(self, *args, **kw):

@@ -67,11 +67,13 @@ class OBProperty(object):
         factory = self.factory
         if factory is not None:
             result = factory()
-            self.__set__(obInst, result)
+            self.__set_factory__(obInst, result)
             return (True, result)
     def __set__(self, obInst, value):
         setattr(obInst, self.private, value)
         self._modified_(obInst)
+    __set_factory__ = __set__
+
     def __delete__(self, obInst):
         if not self.setWithFactory(obInst):
             delattr(obInst, self.private)
@@ -97,7 +99,7 @@ class OBInstProperty(OBProperty):
         factory = self.factory
         if factory is not None:
             result = factory(obInst)
-            self.__set__(obInst, result)
+            self.__set_factory__(obInst, result)
             return (True, result)
 
 def obInstProperty(obObjectFactory, *args, **kw):

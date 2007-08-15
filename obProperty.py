@@ -69,9 +69,11 @@ class OBProperty(object):
             result = factory()
             self.__set_factory__(obInst, result)
             return (True, result)
-    def __set__(self, obInst, value):
+    def set(self, obInst, value):
         setattr(obInst, self.private, value)
         self._modified_(obInst)
+
+    __set__ = set
     __set_factory__ = __set__
 
     def __delete__(self, obInst):
@@ -82,29 +84,18 @@ class OBProperty(object):
     def _modified_(self, obInst):
         pass
 
-def obproperty(obObjectFactory, *args, **kw):
-    if args or kw:
-        instFactory = lambda: obObjectFactory(*args, **kw)
-    else: instFactory = obObjectFactory
-    return OBProperty(instFactory)
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#~ OBProperty that passes the instance back to the factory
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @classmethod
+    def factoryMethod(klass):
+        def boundProperty(obObjectFactory, *args, **kw):
+            if args or kw:
+                factory = lambda: obObjectFactory(*args, **kw)
+            else: factory = obObjectFactory
 
-class OBInstProperty(OBProperty):
-    def factoryFromValue(self, value):
-        return (lambda obInst, value=value: value)
-    def setWithFactory(self, obInst):
-        factory = self.factory
-        if factory is not None:
-            result = factory(obInst)
-            self.__set_factory__(obInst, result)
-            return (True, result)
+            self = klass(factory, False)
+            return self
+        return boundProperty
 
-def obInstProperty(obObjectFactory, *args, **kw):
-    if args or kw:
-        instFactory = lambda obInst: obObjectFactory(obInst, *args, **kw)
-    else: instFactory = obObjectFactory
-    return OBInstProperty(instFactory)
+obproperty = OBProperty.factoryMethod()
 

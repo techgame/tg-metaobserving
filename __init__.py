@@ -15,13 +15,13 @@ from .obUtils import asWeakMethod
 from .metaObservableType import (
         MetaObservableType,
         MetaObservableClassType,
-        MetaObservalbeObject, )
+        MetaObservalbeObject, 
+        )
 
 from .obProperty import (
         OBProperty,
         obproperty,
-        OBInstProperty,
-        obInstProperty, )
+        )
 
 from .obFactoryMap import OBFactoryMap
 
@@ -33,5 +33,6 @@ from .obCollections import (
         OBList,
         OBList,
         OBKeyedList,
-        OBChannelList,)
+        OBChannelList,
+        )
 

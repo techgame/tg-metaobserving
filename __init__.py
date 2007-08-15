@@ -24,6 +24,7 @@ from .obProperty import (
         )
 
 from .obFactoryMap import OBFactoryMap
+from .obSettings import OBSettings
 
 from .obCollections import (
         OBDict,

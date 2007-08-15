@@ -43,7 +43,7 @@ class MetaObservableClassType(type):
         for varName, varInit in self._getClassVars('onObservableClassInit'):
             varInit(varName, self)
 
-    def _getClassVars(self, attr, missing=object()):
+    def _getClassVars(self, attr, missing=None):
         r = {}
         i = 0
         for base in reversed(self.__mro__):

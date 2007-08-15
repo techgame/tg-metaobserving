@@ -72,7 +72,7 @@ OBList.property = classmethod(obproperty)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-class OBDict(set, OBCallN):
+class OBDict(dict, OBCallN):
     def __repr__(self):
         return '{' + ', '.join(sorted(['%s: %s' % (n, k.__name__) for n, k in self.items()])) + '}'
 

@@ -26,15 +26,12 @@ def mapMerge(data, dnew):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class OBSettings(dict):
-    ns = False
-
     @classmethod
     def fromEntry(klass, entry):
         return klass(entry)
         
     def onObservableClassInit(self, propertyName, obKlass):
         self = self.copy()
-        self.ns = True
         setattr(obKlass, propertyName, self)
     onObservableClassInit.priority = 0
 
@@ -44,10 +41,7 @@ class OBSettings(dict):
     onObservableInit.priority = 0
 
     def copy(self):
-        r = self.fromEntry(self)
-        if self.ns is not r.ns:
-            r.ns = self.ns
-        return r
+        return self.fromEntry(self)
 
     def branch(self, *args, **kw):
         self = self.copy()

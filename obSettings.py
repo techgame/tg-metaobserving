@@ -68,7 +68,7 @@ class OBSettings(dict):
         value = dict.__getitem__(self, key)
         if value.__class__ is dict:
             value = self.fromEntry(value)
-            self[name] = value
+            self[key] = value
         return value
     def __setitem__(self, key, value):
         if value.__class__ is dict:

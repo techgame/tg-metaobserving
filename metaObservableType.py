@@ -40,10 +40,10 @@ class MetaObservableClassType(type):
         self.observerNotifyClassInit()
 
     def observerNotifyClassInit(self):
-        for varName, varInit in self._getClassVars('onObservableClassInit'):
+        for varName, varInit in self.getClassVars('onObservableClassInit'):
             varInit(varName, self)
 
-    def _getClassVars(self, attr, missing=None):
+    def getClassVars(self, attr, missing=None):
         r = {}
         i = 0
         for base in reversed(self.__mro__):
@@ -85,7 +85,7 @@ class MetaObservableType(MetaObservableClassType):
         self._refreshObservables()
 
     def _refreshObservables(self):
-        self._initObservers = self._getClassVars('onObservableInit')
+        self._initObservers = self.getClassVars('onObservableInit')
 
     def __call__(self, *args, **kw):
         instance = type.__call__(self, *args, **kw)

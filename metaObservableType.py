@@ -43,27 +43,28 @@ class MetaObservableClassType(type):
         for varName, varInit in self.getClassVars('onObservableClassInit'):
             varInit(varName, self)
 
-    def getClassVars(self, attr, missing=None):
-        r = {}
-        i = 0
+    def getClassVars(self, attr, incPriorities=False, missing=None):
+        result = {}
+        oidx = 0
+        defaultPriority = 0
         for base in reversed(self.__mro__):
             for k, v in vars(base).items():
-                a = getattr(v, attr, missing)
-                if a is not missing:
-                    r[k] = ((a, i), (k, a))
-                    i += 1
+                av = getattr(v, attr, missing)
+                if av is not missing:
+                    pri = getattr(av, 'priority', defaultPriority)
+                    result[k] = (pri, oidx, k, av)
+                    oidx += 1
 
-        r = r.values()
-        r.sort(key=self._listSortByPriority)
-        return [e[1] for e in r]
-
-    @staticmethod
-    def _listSortByPriority(entry):
-        a, i = entry[0]
-        aw = getattr(a, 'priority', 0)
-        return (aw, i)
+        result = result.values()
+        result.sort()
+        if not incPriorities: 
+            result = [e[2:] for e in result]
+        return result
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: REMOVE!
+import inspect 
 
 class MetaObservableType(MetaObservableClassType):
     """Metaclass enabling subclassing and instantiation as cooperative events.
@@ -85,18 +86,40 @@ class MetaObservableType(MetaObservableClassType):
         self._refreshObservables()
 
     def _refreshObservables(self):
-        self._initObservers = self.getClassVars('onObservableInit')
+        self._initObservers = self.getClassVars('onObservableInit', True)
 
     def __call__(self, *args, **kw):
-        instance = type.__call__(self, *args, **kw)
-        self.observerNotifyInit(instance)
+        instance = self.__new__(self, *args, **kw)
+        for pass_ in self.iterObserverNotifyInit(instance):
+            instance.__init__(*args, **kw)
+
         return instance
 
     def observerNotifyInit(self, instance):
-        initObservers = self._initObservers
-        if initObservers:
-            for varName, varInit in initObservers:
+        for pass_ in self.iterObserverNotifyInit(instance):
+            pass
+
+    def iterObserverNotifyInit(self, instance):
+        initObservers = iter(self._initObservers)
+
+        count = len(self._initObservers)
+        for pri, oidx, varName, varInit in initObservers:
+            if pri < 0: 
                 varInit(varName, instance)
+                count -= 1
+            else: 
+                yield
+                varInit(varName, instance)
+                count -= 1
+                break
+        else: 
+            yield
+            return
+
+        for pri, oidx, varName, varInit in initObservers:
+            varInit(varName, instance)
+            count -= 1
+        return
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

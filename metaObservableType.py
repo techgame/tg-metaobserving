@@ -63,9 +63,6 @@ class MetaObservableClassType(type):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# TODO: REMOVE!
-import inspect 
-
 class MetaObservableType(MetaObservableClassType):
     """Metaclass enabling subclassing and instantiation as cooperative events.
 

@@ -14,24 +14,56 @@
 #~ OB Property Implementation 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-class OBProperty(object):
+class OBNamedAttribute(object):
     """Uses MetaObservableType mechanism to implement a property with a factory.
     
     Implements TypeObserverInit and TypeObserverClassInit.
     Can only be used on a object using MetaObservableType-based metaclass.
     """
-    missing = object()
+
     public = None
     private = None
     _private_fmt = '__ob_%s'
 
-    def __init__(self, factory=NotImplemented, isValue=None, publish=None):
+    def __init__(self, publish=None):
         if publish:
             self._setPublishName(publish)
 
+    def __repr__(self):
+        klass = self.__class__
+        return '<%s.%s name:%s|%s>' % (
+                    klass.__module__, klass.__name__,
+                    self.public, self.private)
+
+    def onObservableClassInit(self, propertyName, obKlass):
+        self._setPublishName(propertyName)
+    onObservableClassInit.priority = -15
+
+    def propertyNameTuple(self):
+        return (self.public, self.private)
+
+    def _setPublishName(self, publish):
+        if publish is None:
+            return
+        elif isinstance(self.public, str):
+            return 
+        else:
+            self.public = publish
+            self.private = self._private_fmt % (publish,)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class OBProperty(OBNamedAttribute):
+    missing = object()
+
+    def __init__(self, factory=NotImplemented, isValue=None, publish=None):
+        OBNamedAttribute.__init__(self, publish)
+        self.setFactoryFrom(factory, isValue)
+
+    def setFactoryFrom(self, factory=NotImplemented, isValue=None):
         if isValue is None:
             # autodetect parameter
-            if factory is NotImplemented:
+            if factory is self.missing:
                 factory = None
             elif factory is None or isinstance(factory, (basestring, int, long, float)):
                 factory = self.factoryFromValue(factory)
@@ -40,27 +72,8 @@ class OBProperty(object):
             factory = self.factoryFromValue(factory)
         self.factory = factory
 
-    def __repr__(self):
-        klass = self.__class__
-        return '<%s.%s name:%s|%s>' % (
-                    klass.__module__, klass.__name__,
-                    self.public, self.private)
     def factoryFromValue(self, value):
         return (lambda value=value: value)
-
-    def _setPublishName(self, publish):
-        if publish is None or isinstance(self.public, str):
-            return
-
-        self.public = publish
-        self.private = self._private_fmt % (publish,)
-
-    def propertyNameTuple(self):
-        return (self.public, self.private)
-
-    def onObservableClassInit(self, propertyName, obKlass):
-        self._setPublishName(propertyName)
-    onObservableClassInit.priority = -15
 
     def __get__(self, obInst, obKlass):
         if obInst is None:

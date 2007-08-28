@@ -19,6 +19,7 @@ from .metaObservableType import (
         )
 
 from .obProperty import (
+        OBNamedAttribute,
         OBProperty,
         obproperty,
         )

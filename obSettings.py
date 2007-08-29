@@ -33,12 +33,12 @@ class OBSettings(dict):
     def onObservableClassInit(self, propertyName, obKlass):
         self = self.copy()
         setattr(obKlass, propertyName, self)
-    onObservableClassInit.priority = 0
+    onObservableClassInit.priority = -5
 
     def onObservableInit(self, propertyName, obInstance):
         self = self.copy()
         setattr(obInstance, propertyName, self)
-    onObservableInit.priority = 0
+    onObservableInit.priority = -5
 
     def copy(self):
         return self.fromEntry(self)

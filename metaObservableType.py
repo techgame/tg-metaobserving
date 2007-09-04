@@ -24,6 +24,10 @@ class TypeObserverInit(object):
         raise NotImplementedError('Subclass Responsibility: %r' % (self,))
     onObservableInit.priority = 0
 
+    def onObservableRestore(self, pName, obInstance):
+        raise NotImplementedError('Subclass Responsibility: %r' % (self,))
+    onObservableRestore.priority = 0
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class MetaObservableClassType(type):
@@ -84,6 +88,7 @@ class MetaObservableType(MetaObservableClassType):
 
     def _refreshObservables(self):
         self._initObservers = self.getClassVars('onObservableInit', True)
+        self._restoreObservers = self.getClassVars('onObservableRestore')
 
     def __call__(self, *args, **kw):
         instance = self.__new__(self, *args, **kw)
@@ -117,6 +122,10 @@ class MetaObservableType(MetaObservableClassType):
             varInit(varName, instance)
             count -= 1
         return
+
+    def observerNotifyRestore(self, instance):
+        for varName, varRestore in self._restoreObservers:
+            varRestore(varName, instance)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

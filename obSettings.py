@@ -80,5 +80,11 @@ class OBSettings(dict):
         dnew = dict(*args, **kw)
         self.mapMerge(dnew)
         return self
-    merge = update
+
+    def merge(self, obSettings):
+        result = self.copy()
+        for each in obSettings:
+            if each is not None:
+                result.update(each)
+        return result
 

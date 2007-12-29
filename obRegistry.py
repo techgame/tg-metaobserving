@@ -21,6 +21,9 @@ class OBClassRegistry(dict):
         setattr(obKlass, pubName, self.copy())
     onObservableClassInit.priority = -5
 
+    def __missing__(self, key):
+        return self.get(None, None)
+
     def copy(self):
         return self.__class__(self)
 
@@ -32,6 +35,7 @@ class OBClassRegistry(dict):
             return partial(self.set, key)
 
         self[key] = fn
+        return fn
     
     def discard(self, key):
         r = self.pop(key, None)

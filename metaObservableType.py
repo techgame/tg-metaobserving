@@ -47,22 +47,22 @@ class MetaObservableClassType(type):
         for varName, varInit in self.getClassVars('onObservableClassInit'):
             varInit(varName, self)
 
-    def getClassVars(self, attr, incPriorities=False, missing=None):
+    def getClassVars(self, attr, incPriorities=False, missing=object()):
         result = {}
-        oidx = 0
         defaultPriority = 0
-        for base in reversed(self.__mro__):
-            for k, v in vars(base).items():
-                av = getattr(v, attr, missing)
-                if av is not missing:
-                    pri = getattr(av, 'priority', defaultPriority)
-                    result[k] = (pri, oidx, k, av)
-                    oidx += 1
+
+        obkeys = set(k for b in self.__mro__ for k,v in vars(b).iteritems() if hasattr(v, attr))
+        for obname in obkeys:
+            obvar = getattr(self, obname)
+            obattr = getattr(obvar, attr, missing)
+            if obattr is not missing:
+                pri = getattr(obattr, 'priority', defaultPriority)
+                result[obname] = (pri, obname, obattr)
 
         result = result.values()
         result.sort()
         if not incPriorities: 
-            result = [e[2:] for e in result]
+            result = [e[-2:] for e in result]
         return result
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -105,7 +105,7 @@ class MetaObservableType(MetaObservableClassType):
         initObservers = iter(self._initObservers)
 
         count = len(self._initObservers)
-        for pri, oidx, varName, varInit in initObservers:
+        for pri, varName, varInit in initObservers:
             if pri < 0: 
                 varInit(varName, instance)
                 count -= 1
@@ -118,7 +118,7 @@ class MetaObservableType(MetaObservableClassType):
             yield
             return
 
-        for pri, oidx, varName, varInit in initObservers:
+        for pri, varName, varInit in initObservers:
             varInit(varName, instance)
             count -= 1
         return

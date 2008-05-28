@@ -26,6 +26,10 @@ def mapMerge(data, dnew):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class OBSettings(dict):
+    def __init__(self, *args, **kw):
+        dict.__init__(self, *args, **kw)
+        self.branchLists()
+
     @classmethod
     def fromEntry(klass, entry):
         return klass(entry)
@@ -87,4 +91,11 @@ class OBSettings(dict):
             if each is not None:
                 result.update(each)
         return result
+
+    def branchLists(self):
+        kw = {}
+        for k,v in self.iteritems():
+            if v.__class__ is list:
+                kw[k] = v[:]
+        if kw: self.update(kw)
 

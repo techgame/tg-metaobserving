@@ -10,6 +10,8 @@
 #~ Imports 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+from copy import deepcopy
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~ Definitions 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,7 +47,7 @@ class OBSettings(dict):
     onObservableInit.priority = -5
 
     def copy(self):
-        return self.fromEntry(self)
+        return self.fromEntry(deepcopy(self))
 
     def branch(self, *args, **kw):
         self = self.copy()
@@ -67,6 +69,13 @@ class OBSettings(dict):
             del self[name]
         except LookupError, e:
             raise AttributeError(str(e))
+
+    def get(self, key, default=None):
+        value = dict.get(self, key, default)
+        if value.__class__ is dict:
+            value = self.fromEntry(value)
+            self[key] = value
+        return value
 
     def __getitem__(self, key):
         value = dict.__getitem__(self, key)

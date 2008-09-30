@@ -132,3 +132,6 @@ class MetaObservableType(MetaObservableClassType):
 class MetaObservalbeObject(object):
     __metaclass__ = MetaObservableType
 
+    def __setstate__(self, state):
+        type(self).observerNotifyRestore(self)
+

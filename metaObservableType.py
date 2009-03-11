@@ -51,18 +51,20 @@ class MetaObservableClassType(type):
         result = {}
         defaultPriority = 0
 
+        if incPriorities:
+            entry = lambda *args: args
+        else: entry = lambda p,n,a: (n,a)
+
         obkeys = set(k for b in self.__mro__ for k,v in vars(b).iteritems() if hasattr(v, attr))
         for obname in obkeys:
             obvar = getattr(self, obname)
             obattr = getattr(obvar, attr, missing)
             if obattr is not missing:
                 pri = getattr(obattr, 'priority', defaultPriority)
-                result[obname] = (pri, obname, obattr)
+                result[obname] = entry(pri, obname, obattr)
 
         result = result.values()
         result.sort()
-        if not incPriorities: 
-            result = [e[-2:] for e in result]
         return result
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -45,6 +45,8 @@ class OBCallN(object):
 class OBList(list, OBCallN):
     def __repr__(self):
         return '[' + ', '.join(sorted([k.__name__ for k in self])) + ']'
+    def __hash__(self):
+        return object.__hash__(self)
 
     def copy(self):
         return self.__class__(self[:])
@@ -75,6 +77,8 @@ OBList.property = classmethod(obproperty)
 class OBDict(dict, OBCallN):
     def __repr__(self):
         return '{' + ', '.join(sorted(['%s: %s' % (n, k.__name__) for n, k in self.items()])) + '}'
+    def __hash__(self):
+        return object.__hash__(self)
 
     def on(self, fn):
         self[fn] = fn
@@ -90,6 +94,8 @@ OBDict.property = classmethod(obproperty)
 class OBSet(set, OBCallN):
     def __repr__(self):
         return '{' + ', '.join(sorted([k.__name__ for k in self])) + '}'
+    def __hash__(self):
+        return object.__hash__(self)
 
     def inCallOrder(self):
         return list(self)
@@ -114,11 +120,6 @@ class OBKeyedCollection(defaultdict):
             OBCollection = self.OBCollection
         defaultdict.__init__(self, OBCollection)
 
-    def __repr__(self):
-        klass = self.__class__
-        keys = ', '.join(self.keys())
-        return '<%s.%s keys: %s>' % (klass.__module__, klass.__name__, keys)
-
     @classmethod
     def new(klass):
         return klass()
@@ -129,6 +130,9 @@ class OBKeyedCollection(defaultdict):
             r = ('  %s: %s,' % e for e in r)
             return '{\n' + '\n'.join(r) + '\n}'
         else: return '{}'
+    def __hash__(self):
+        return object.__hash__(self)
+
     def copy(self):
         result = self.new()
         result.update((k, v.copy()) for k,v in self.iteritems())

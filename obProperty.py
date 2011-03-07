@@ -36,6 +36,13 @@ class OBNamedAttribute(object):
                     self.public, self.private)
 
     def onObservableClassInit(self, propertyName, obKlass):
+        if self.public == True:
+            # true signifies that this is a protected reflection of a public
+            # name... just remove the leading underscores
+            propertyName = propertyName.split('__', 1)
+            if len(propertyName) > 1:
+                propertyName = propertyName[1]
+            else: propertyName = propertyName[0].lstrip('_')
         self._setPublishName(propertyName)
     onObservableClassInit.priority = -15
 

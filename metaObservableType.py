@@ -95,7 +95,14 @@ class MetaObservableType(MetaObservableClassType):
     def __call__(self, *args, **kw):
         instance = self.__new__(self, *args, **kw)
         for pass_ in self.iterObserverNotifyInit(instance):
-            instance.__init__(*args, **kw)
+            try: instance.__init__(*args, **kw)
+            except TypeError, err:
+                msg = err.args[0]
+                if msg.startswith('__init__'):
+                    # patch message to be more helpful
+                    msg = '%s.%s.%s' % (self.__module__, self.__name__, msg)
+                    err.args = (msg,) + err.args[1:]
+                raise
 
         return instance
 
